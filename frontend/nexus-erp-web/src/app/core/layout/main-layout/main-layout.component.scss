@@ -1,0 +1,48 @@
+.layout-container {
+  height: 100vh;
+}
+
+.loading-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.sidenav {
+  width: var(--sidebar-width);
+
+  .sidenav-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 16px;
+    font-size: 20px;
+    font-weight: 600;
+
+    .logo-icon { font-size: 32px; width: 32px; height: 32px; }
+  }
+
+  .active-link {
+    background: rgba(63, 81, 181, 0.12);
+    color: #3f51b5;
+  }
+}
+
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  .spacer { flex: 1; }
+  .user-name { margin: 0 8px; font-size: 14px; }
+}
+
+.main-content {
+  min-height: calc(100vh - var(--header-height));
+}
+
+@media (max-width: 768px) {
+  .user-name { display: none; }
+}

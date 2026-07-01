@@ -1,0 +1,15 @@
+.stat-card {
+  text-align: center;
+  padding: 24px;
+
+  mat-icon { font-size: 40px; width: 40px; height: 40px; color: #3f51b5; }
+  .stat-value { font-size: 36px; font-weight: 700; margin: 8px 0; }
+  .stat-label { color: #666; font-size: 14px; }
+}
+
+.chart-card {
+  margin-top: 24px;
+  padding: 24px;
+
+  .chart-container { max-width: 400px; margin: 0 auto; }
+}

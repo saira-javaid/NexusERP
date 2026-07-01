@@ -1,0 +1,26 @@
+@import '../login/login.component.scss';
+
+.name-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.auth-footer {
+  text-align: center;
+  margin: 24px 0 0;
+  color: #666;
+  font-size: 14px;
+
+  a {
+    color: #3f51b5;
+    text-decoration: none;
+    font-weight: 500;
+    margin-left: 4px;
+    &:hover { text-decoration: underline; }
+  }
+}
+
+@media (max-width: 480px) {
+  .name-row { grid-template-columns: 1fr; }
+}

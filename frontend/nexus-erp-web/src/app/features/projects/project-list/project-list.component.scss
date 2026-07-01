@@ -1,0 +1,25 @@
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+}
+
+.filters {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+
+  mat-form-field { min-width: 200px; }
+}
+
+.table-container { overflow: auto; }
+
+@media (max-width: 768px) {
+  .filters mat-form-field { width: 100%; }
+}

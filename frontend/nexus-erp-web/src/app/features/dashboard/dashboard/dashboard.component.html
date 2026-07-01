@@ -1,0 +1,26 @@
+<div class="page-container">
+  <h1>Dashboard</h1>
+  <div class="card-grid">
+    <mat-card class="stat-card">
+      <mat-icon>folder</mat-icon>
+      <div class="stat-value">{{ stats()?.totalProjects ?? 0 }}</div>
+      <div class="stat-label">Projects</div>
+    </mat-card>
+    <mat-card class="stat-card">
+      <mat-icon>task_alt</mat-icon>
+      <div class="stat-value">{{ stats()?.totalTasks ?? 0 }}</div>
+      <div class="stat-label">Tasks</div>
+    </mat-card>
+    <mat-card class="stat-card">
+      <mat-icon>notifications</mat-icon>
+      <div class="stat-value">{{ stats()?.unreadNotifications ?? 0 }}</div>
+      <div class="stat-label">Unread Notifications</div>
+    </mat-card>
+  </div>
+  <mat-card class="chart-card">
+    <h2>Tasks by Status</h2>
+    <div class="chart-container">
+      <canvas baseChart [data]="chartData" [options]="chartOptions" type="doughnut"></canvas>
+    </div>
+  </mat-card>
+</div>

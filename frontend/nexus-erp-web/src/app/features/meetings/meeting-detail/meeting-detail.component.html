@@ -1,0 +1,106 @@
+@if (meeting(); as m) {
+  <div class="page-container">
+    <div class="page-header">
+      <div>
+        <a mat-button routerLink="/meetings"><mat-icon>arrow_back</mat-icon> Back to Meetings</a>
+        <h1>{{ m.title }}</h1>
+        <span class="status-badge">{{ m.status | meetingStatusLabel }}</span>
+      </div>
+      <div class="actions">
+        @if (canEdit) {
+          <a mat-stroked-button [routerLink]="['edit']">
+            <mat-icon>edit</mat-icon> Edit
+          </a>
+        }
+        @if (canDelete) {
+          <button mat-stroked-button color="warn" (click)="deleteMeeting()">
+            <mat-icon>cancel</mat-icon> Cancel Meeting
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="detail-grid">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Schedule</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="detail-row">
+            <mat-icon>schedule</mat-icon>
+            <div>
+              <strong>Start</strong>
+              <p>{{ m.startAt | date:'full' }}</p>
+            </div>
+          </div>
+          <div class="detail-row">
+            <mat-icon>event</mat-icon>
+            <div>
+              <strong>End</strong>
+              <p>{{ m.endAt | date:'full' }}</p>
+            </div>
+          </div>
+          <div class="detail-row">
+            <mat-icon>person</mat-icon>
+            <div>
+              <strong>Organizer</strong>
+              <p>{{ m.organizerName }}</p>
+            </div>
+          </div>
+          @if (m.location) {
+            <div class="detail-row">
+              <mat-icon>place</mat-icon>
+              <div>
+                <strong>Location</strong>
+                <p>{{ m.location }}</p>
+              </div>
+            </div>
+          }
+          @if (m.projectName) {
+            <div class="detail-row">
+              <mat-icon>folder</mat-icon>
+              <div>
+                <strong>Project</strong>
+                <p>{{ m.projectName }}</p>
+              </div>
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Attendees ({{ m.attendees.length }})</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          @if (m.attendees.length === 0) {
+            <p class="empty">No attendees invited yet.</p>
+          } @else {
+            <div class="attendee-list">
+              @for (a of m.attendees; track a.userId) {
+                <div class="attendee-item">
+                  <mat-icon>account_circle</mat-icon>
+                  <div>
+                    <strong>{{ a.fullName }}</strong>
+                    <span>{{ a.email }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+
+      @if (m.description) {
+        <mat-card class="full-width">
+          <mat-card-header>
+            <mat-card-title>Description</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p>{{ m.description }}</p>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  </div>
+}

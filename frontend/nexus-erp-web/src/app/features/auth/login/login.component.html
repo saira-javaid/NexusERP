@@ -1,0 +1,29 @@
+<div class="login-container">
+  <mat-card class="login-card">
+    <div class="login-header">
+      <mat-icon class="logo">hub</mat-icon>
+      <h1>NexusERP</h1>
+      <p>Enterprise Project Management</p>
+    </div>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" type="email" appAutofocus>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Password</mat-label>
+        <input matInput formControlName="password" [type]="hidePassword ? 'password' : 'text'">
+        <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword">
+          <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+      </mat-form-field>
+      <button mat-flat-button color="primary" class="full-width" type="submit" [disabled]="form.invalid">
+        Sign In
+      </button>
+    </form>
+    <p class="auth-footer">
+      Don't have an account?
+      <a routerLink="/auth/signup">Create one</a>
+    </p>
+  </mat-card>
+</div>

@@ -1,0 +1,47 @@
+@if (isLoading()) {
+  <mat-progress-bar mode="indeterminate" class="loading-bar"></mat-progress-bar>
+}
+
+<mat-sidenav-container class="layout-container">
+  <mat-sidenav
+    [mode]="isHandset() ? 'over' : 'side'"
+    [opened]="sidenavOpened"
+    class="sidenav">
+    <div class="sidenav-header">
+      <mat-icon class="logo-icon">hub</mat-icon>
+      <span class="logo-text">NexusERP</span>
+    </div>
+    <mat-nav-list>
+      @for (item of visibleNavItems(); track item.route) {
+        <a mat-list-item [routerLink]="item.route" routerLinkActive="active-link">
+          <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+          <span matListItemTitle>{{ item.label }}</span>
+        </a>
+      }
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <mat-toolbar color="primary" class="toolbar">
+      @if (isHandset()) {
+        <button mat-icon-button (click)="sidenavOpened = !sidenavOpened">
+          <mat-icon>menu</mat-icon>
+        </button>
+      }
+      <span class="spacer"></span>
+      <button mat-icon-button [routerLink]="['/notifications']" [matBadge]="unreadCount()" matBadgeColor="warn" [matBadgeHidden]="unreadCount() === 0">
+        <mat-icon>notifications</mat-icon>
+      </button>
+      <button mat-icon-button (click)="toggleTheme()">
+        <mat-icon>{{ theme() === 'dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
+      </button>
+      <span class="user-name">{{ user()?.fullName }}</span>
+      <button mat-icon-button (click)="logout()" matTooltip="Logout">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </mat-toolbar>
+    <main class="main-content">
+      <router-outlet />
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

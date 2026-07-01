@@ -1,0 +1,84 @@
+<div class="page-container">
+  <h1>{{ isEdit ? 'Edit Meeting' : 'Schedule Meeting' }}</h1>
+  <mat-card>
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-grid">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Title</mat-label>
+          <input matInput formControlName="title" placeholder="e.g. Sprint planning with dev team">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description</mat-label>
+          <textarea matInput formControlName="description" rows="3"></textarea>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Location / Meeting Link</mat-label>
+          <input matInput formControlName="location" placeholder="Room 204 or Teams URL">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Related Project</mat-label>
+          <mat-select formControlName="projectId">
+            <mat-option [value]="null">None</mat-option>
+            @for (p of projects; track p.id) {
+              <mat-option [value]="p.id">{{ p.code }} — {{ p.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Status</mat-label>
+          <mat-select formControlName="status">
+            @for (s of meetingStatuses; track s) {
+              <mat-option [value]="s">{{ s | meetingStatusLabel }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Start Date</mat-label>
+          <input matInput [matDatepicker]="startPicker" formControlName="startDate">
+          <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+          <mat-datepicker #startPicker></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Start Time</mat-label>
+          <input matInput type="time" formControlName="startTime">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>End Date</mat-label>
+          <input matInput [matDatepicker]="endPicker" formControlName="endDate">
+          <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+          <mat-datepicker #endPicker></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>End Time</mat-label>
+          <input matInput type="time" formControlName="endTime">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Attendees</mat-label>
+          <mat-select formControlName="attendeeIds" multiple>
+            @for (group of attendeeGroups; track group.label) {
+              <mat-optgroup [label]="group.label">
+                @for (u of group.users; track u.id) {
+                  <mat-option [value]="u.id">{{ u.fullName }} ({{ u.email }})</mat-option>
+                }
+              </mat-optgroup>
+            }
+          </mat-select>
+          <mat-hint>Select managers, developers, clients, or other team members</mat-hint>
+        </mat-form-field>
+        <div class="form-actions full-width">
+          <button mat-button type="button" routerLink="/meetings">Cancel</button>
+          <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid">
+            {{ isEdit ? 'Save Changes' : 'Schedule Meeting' }}
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<style>
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 16px 0; }
+  .full-width { grid-column: 1 / -1; }
+  .form-actions { display: flex; justify-content: flex-end; gap: 8px; }
+  @media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } }
+</style>

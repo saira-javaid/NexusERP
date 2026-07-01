@@ -1,0 +1,126 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>Reports</h1>
+    @if (overview()) {
+      <button mat-stroked-button (click)="exportReport()">
+        <mat-icon>download</mat-icon> Export Excel
+      </button>
+    }
+  </div>
+
+  @if (loading()) {
+    <p class="loading">Loading report data…</p>
+  } @else if (error()) {
+    <mat-card class="error-card">
+      <p>{{ error() }}</p>
+      <button mat-flat-button color="primary" (click)="loadOverview()">Retry</button>
+    </mat-card>
+  } @else if (overview(); as data) {
+    <div class="card-grid">
+      <mat-card class="stat-card">
+        <mat-icon>folder</mat-icon>
+        <div class="stat-value">{{ data.summary.totalProjects }}</div>
+        <div class="stat-label">Total Projects</div>
+      </mat-card>
+      <mat-card class="stat-card">
+        <mat-icon>play_circle</mat-icon>
+        <div class="stat-value">{{ data.summary.activeProjects }}</div>
+        <div class="stat-label">Active Projects</div>
+      </mat-card>
+      <mat-card class="stat-card">
+        <mat-icon>task_alt</mat-icon>
+        <div class="stat-value">{{ data.summary.totalTasks }}</div>
+        <div class="stat-label">Total Tasks</div>
+      </mat-card>
+      <mat-card class="stat-card">
+        <mat-icon>payments</mat-icon>
+        <div class="stat-value">{{ data.summary.totalBudget | currency:'USD':'symbol':'1.0-0' }}</div>
+        <div class="stat-label">Total Budget</div>
+      </mat-card>
+    </div>
+
+    <div class="charts-row">
+      <mat-card class="chart-card">
+        <h2>Projects by Status</h2>
+        <div class="breakdown-row">
+          @for (item of projectsByStatus(); track item.status) {
+            <div class="breakdown-chip">
+              <span class="dot" [style.background]="item.label === 'Planning' ? '#3f51b5' : item.label === 'Active' ? '#009688' : item.label === 'OnHold' ? '#ff9800' : item.label === 'Completed' ? '#4caf50' : '#9e9e9e'"></span>
+              <span class="label">{{ item.label === 'OnHold' ? 'On Hold' : item.label }}</span>
+              <strong>{{ item.count }}</strong>
+            </div>
+          } @empty {
+            <p class="empty-inline">No projects</p>
+          }
+        </div>
+        <div class="chart-container">
+          @if (chartsReady() && projectsByStatus().length > 0) {
+            <canvas baseChart [data]="projectChartData" [options]="barChartOptions" type="bar"></canvas>
+          }
+        </div>
+      </mat-card>
+
+      <mat-card class="chart-card">
+        <h2>Tasks by Status</h2>
+        <div class="breakdown-row">
+          @for (item of taskStatusRows(); track item.label) {
+            <div class="breakdown-chip">
+              <span class="dot" [style.background]="item.color"></span>
+              <span class="label">{{ item.label }}</span>
+              <strong>{{ item.count }}</strong>
+            </div>
+          }
+        </div>
+        <div class="chart-container">
+          @if (chartsReady()) {
+            <canvas baseChart [data]="taskChartData" [options]="doughnutOptions" type="doughnut"></canvas>
+          }
+        </div>
+      </mat-card>
+    </div>
+
+    <mat-card class="table-card">
+      <div class="table-header">
+        <h2>Project Overview</h2>
+        <span class="row-count">{{ projectDataSource.data.length }} projects</span>
+      </div>
+
+      @if (projectDataSource.data.length > 0) {
+        <div class="table-wrap">
+          <table mat-table [dataSource]="projectDataSource">
+            <ng-container matColumnDef="code">
+              <th mat-header-cell *matHeaderCellDef>Code</th>
+              <td mat-cell *matCellDef="let p">{{ p.code }}</td>
+            </ng-container>
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Name</th>
+              <td mat-cell *matCellDef="let p">{{ p.name }}</td>
+            </ng-container>
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+              <td mat-cell *matCellDef="let p">
+                <span class="status-badge">{{ p.status | statusLabel:'project' }}</span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="tasks">
+              <th mat-header-cell *matHeaderCellDef>Tasks</th>
+              <td mat-cell *matCellDef="let p">{{ p.taskCount }}</td>
+            </ng-container>
+            <ng-container matColumnDef="budget">
+              <th mat-header-cell *matHeaderCellDef>Budget</th>
+              <td mat-cell *matCellDef="let p">{{ p.budget | currency:'USD':'symbol':'1.0-0' }}</td>
+            </ng-container>
+            <ng-container matColumnDef="manager">
+              <th mat-header-cell *matHeaderCellDef>Manager</th>
+              <td mat-cell *matCellDef="let p">{{ p.managerName ?? '—' }}</td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+        </div>
+      } @else {
+        <p class="empty">No projects found.</p>
+      }
+    </mat-card>
+  }
+</div>

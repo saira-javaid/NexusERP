@@ -1,0 +1,29 @@
+<div class="page-container">
+  <h1>Kanban Board</h1>
+  <div class="kanban-board" cdkDropListGroup>
+    @for (column of columns(); track column.status) {
+      <div class="kanban-column">
+        <h3>{{ column.label }} ({{ column.tasks.length }})</h3>
+        <div
+          class="task-list"
+          cdkDropList
+          [id]="'list-' + column.status"
+          [cdkDropListData]="column.tasks"
+          [cdkDropListConnectedTo]="connectedLists"
+          (cdkDropListDropped)="drop($event, column)">
+          @for (task of column.tasks; track task.id) {
+            <mat-card class="task-card" cdkDrag>
+              <div class="task-title">{{ task.title }}</div>
+              <div class="task-meta">
+                <mat-chip>{{ task.priority | priorityLabel }}</mat-chip>
+                @if (task.assigneeName) {
+                  <span class="assignee"><mat-icon>person</mat-icon>{{ task.assigneeName }}</span>
+                }
+              </div>
+            </mat-card>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>

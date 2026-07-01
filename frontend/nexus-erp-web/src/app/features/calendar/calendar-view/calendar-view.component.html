@@ -1,0 +1,17 @@
+<div class="page-container">
+  <div class="calendar-header">
+    <button mat-button (click)="prevMonth()">←</button>
+    <h1>{{ monthLabel() }}</h1>
+    <button mat-button (click)="nextMonth()">→</button>
+  </div>
+  <div class="calendar-grid">
+    @for (day of getDaysInMonth(); track day) {
+      <mat-card class="day-cell">
+        <div class="day-number">{{ day }}</div>
+        @for (task of tasksForDay(day); track task.id) {
+          <div class="task-chip">{{ task.title }}</div>
+        }
+      </mat-card>
+    }
+  </div>
+</div>

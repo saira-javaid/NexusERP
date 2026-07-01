@@ -1,0 +1,25 @@
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.filters {
+  margin-bottom: 16px;
+
+  mat-form-field { min-width: 280px; }
+}
+
+.table-container { overflow: auto; }
+
+.system-badge {
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  background: #e3f2fd;
+  color: #1565c0;
+}

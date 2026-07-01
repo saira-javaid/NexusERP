@@ -1,0 +1,69 @@
+<div class="page-container">
+  <h1>{{ isEdit ? 'Edit Role' : 'New Role' }}</h1>
+
+  <mat-card>
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Name</mat-label>
+          <input matInput formControlName="name">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description</mat-label>
+          <textarea matInput formControlName="description" rows="2"></textarea>
+        </mat-form-field>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="permissions-card">
+    <mat-card-header>
+      <mat-card-title>Permissions</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      @for (module of (permissionsByModule | keyvalue); track module.key) {
+        <div class="module-group">
+          <div class="module-header">
+            <mat-checkbox
+              [checked]="isModuleFullySelected(module.key)"
+              (change)="toggleModule(module.key, $event.checked)">
+              {{ module.key }}
+            </mat-checkbox>
+          </div>
+          <div class="permission-list">
+            @for (perm of module.value; track perm.id) {
+              <mat-checkbox
+                [checked]="isSelected(perm.id)"
+                (change)="togglePermission(perm.id, $event.checked)">
+                {{ perm.name }}
+              </mat-checkbox>
+            }
+          </div>
+        </div>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  <div class="form-actions">
+    <button mat-button type="button" routerLink="/roles">Cancel</button>
+    <button mat-flat-button color="primary" (click)="onSubmit()" [disabled]="form.invalid">
+      {{ isEdit ? 'Save' : 'Create' }}
+    </button>
+  </div>
+</div>
+
+<style>
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 16px 0; }
+  .full-width { grid-column: 1 / -1; }
+  .permissions-card { margin-top: 24px; }
+  .module-group { margin-bottom: 20px; }
+  .module-header { font-weight: 600; margin-bottom: 8px; }
+  .permission-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 4px 16px;
+    padding-left: 16px;
+  }
+  .form-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 24px; }
+  @media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } }
+</style>
