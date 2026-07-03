@@ -17,6 +17,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { UserPreferencesService } from '../../../core/services/user-preferences.service';
 import { UserListItem } from '../../../core/models/user.model';
 import { ListPaginationComponent } from '../../../shared/components/list-pagination/list-pagination.component';
+import { ConfirmDialogService } from '../../../shared/services/confirm-dialog.service';
 
 @Component({
   selector: 'app-user-list',
@@ -34,6 +35,7 @@ export class UserListComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly preferences = inject(UserPreferencesService);
+  private readonly confirmDialog = inject(ConfirmDialogService);
 
   readonly users = signal<UserListItem[]>([]);
   readonly totalCount = signal(0);
@@ -81,15 +83,22 @@ export class UserListComponent implements OnInit {
   }
 
   deactivate(user: UserListItem): void {
-    const confirmDelete = this.preferences.preferences().confirmBeforeDelete;
-    if (confirmDelete && !confirm(`Deactivate ${user.fullName}?`)) return;
-    this.userService.delete(user.id).subscribe({
-      next: () => {
-        this.snackBar.open('User deactivated', 'Close', { duration: 3000 });
-        this.pageIndex.set(0);
-        this.loadUsers();
-      },
-      error: err => this.snackBar.open(err.error?.message ?? 'Failed to deactivate user', 'Close', { duration: 5000 }),
+    this.confirmDialog.confirmIfEnabled({
+      title: 'Deactivate user',
+      message: `Deactivate ${user.fullName}? They will no longer be able to sign in.`,
+      confirmText: 'Deactivate',
+      confirmColor: 'warn',
+      icon: 'person_off',
+    }).subscribe(confirmed => {
+      if (!confirmed) return;
+      this.userService.delete(user.id).subscribe({
+        next: () => {
+          this.snackBar.open('User deactivated', 'Close', { duration: 3000 });
+          this.pageIndex.set(0);
+          this.loadUsers();
+        },
+        error: err => this.snackBar.open(err.error?.message ?? 'Failed to deactivate user', 'Close', { duration: 5000 }),
+      });
     });
   }
 }

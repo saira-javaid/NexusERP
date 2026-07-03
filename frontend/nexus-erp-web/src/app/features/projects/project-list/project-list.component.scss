@@ -18,7 +18,11 @@
   mat-form-field { min-width: 200px; }
 }
 
-.table-container { overflow: auto; }
+.table-container {
+  @media (min-width: 769px) {
+    overflow: auto;
+  }
+}
 
 @media (max-width: 768px) {
   .filters mat-form-field { width: 100%; }

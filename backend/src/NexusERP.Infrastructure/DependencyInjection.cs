@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using NexusERP.Application.Common.Interfaces;
+using NexusERP.Application.Features.Chat.Handlers;
 using NexusERP.Domain.Entities;
 using NexusERP.Domain.Interfaces;
 using NexusERP.Infrastructure.BackgroundServices;
@@ -81,6 +82,9 @@ public static class DependencyInjection
         services.AddScoped<IAuditService, AuditService>();
         services.AddScoped<INotificationService, NotificationService>();
         services.AddScoped<INotificationHubService, NotificationHubService>();
+        services.AddScoped<ChatToolExecutor>();
+        services.AddScoped<IAiChatService, AgenticChatService>();
+        services.AddHttpClient("OpenAi");
         services.AddHttpContextAccessor();
 
         services.AddSignalR();

@@ -42,6 +42,8 @@ services:
       Jwt__Key: "NexusERP-Super-Secret-Key-Min-32-Chars-Long!"
       Jwt__Issuer: "NexusERP"
       Jwt__Audience: "NexusERP-Clients"
+      Ai__OpenAi__ApiKey: ""
+      Ai__OpenAi__Model: "gpt-4o-mini"
     ports:
       - "5000:8080"
     depends_on:

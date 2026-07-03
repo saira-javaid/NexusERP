@@ -82,42 +82,47 @@
     <mat-card class="table-card">
       <div class="table-header">
         <h2>Project Overview</h2>
-        <span class="row-count">{{ projectDataSource.data.length }} projects</span>
+        <span class="row-count">{{ allProjects().length }} projects</span>
       </div>
 
-      @if (projectDataSource.data.length > 0) {
+      @if (allProjects().length > 0) {
         <div class="table-wrap">
-          <table mat-table [dataSource]="projectDataSource">
+          <table mat-table class="responsive-table" [dataSource]="projectDataSource">
             <ng-container matColumnDef="code">
               <th mat-header-cell *matHeaderCellDef>Code</th>
-              <td mat-cell *matCellDef="let p">{{ p.code }}</td>
+              <td mat-cell *matCellDef="let p" data-label="Code">{{ p.code }}</td>
             </ng-container>
             <ng-container matColumnDef="name">
               <th mat-header-cell *matHeaderCellDef>Name</th>
-              <td mat-cell *matCellDef="let p">{{ p.name }}</td>
+              <td mat-cell *matCellDef="let p" data-label="Name">{{ p.name }}</td>
             </ng-container>
             <ng-container matColumnDef="status">
               <th mat-header-cell *matHeaderCellDef>Status</th>
-              <td mat-cell *matCellDef="let p">
+              <td mat-cell *matCellDef="let p" data-label="Status">
                 <span class="status-badge">{{ p.status | statusLabel:'project' }}</span>
               </td>
             </ng-container>
             <ng-container matColumnDef="tasks">
               <th mat-header-cell *matHeaderCellDef>Tasks</th>
-              <td mat-cell *matCellDef="let p">{{ p.taskCount }}</td>
+              <td mat-cell *matCellDef="let p" data-label="Tasks">{{ p.taskCount }}</td>
             </ng-container>
             <ng-container matColumnDef="budget">
               <th mat-header-cell *matHeaderCellDef>Budget</th>
-              <td mat-cell *matCellDef="let p">{{ p.budget | currency:'USD':'symbol':'1.0-0' }}</td>
+              <td mat-cell *matCellDef="let p" data-label="Budget">{{ p.budget | currency:'USD':'symbol':'1.0-0' }}</td>
             </ng-container>
             <ng-container matColumnDef="manager">
               <th mat-header-cell *matHeaderCellDef>Manager</th>
-              <td mat-cell *matCellDef="let p">{{ p.managerName ?? '—' }}</td>
+              <td mat-cell *matCellDef="let p" data-label="Manager">{{ p.managerName ?? '—' }}</td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
           </table>
         </div>
+        <app-list-pagination
+          [totalCount]="allProjects().length"
+          [pageIndex]="pageIndex()"
+          [pageSize]="pageSize()"
+          (pageChange)="onPageChange($event)" />
       } @else {
         <p class="empty">No projects found.</p>
       }

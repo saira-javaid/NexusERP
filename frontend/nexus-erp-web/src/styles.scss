@@ -1,4 +1,5 @@
 @use '@angular/material' as mat;
+@use 'responsive-table';
 
 @include mat.core();
 
@@ -51,6 +52,21 @@ html, body {
   padding: 24px;
   max-width: 1400px;
   margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.confirm-dialog-panel {
+  border-radius: 12px !important;
+  overflow: hidden;
+
+  .mat-mdc-dialog-surface {
+    padding: 0 !important;
+  }
+}
+
+.cdk-overlay-container {
+  z-index: 1200;
 }
 
 .card-grid {

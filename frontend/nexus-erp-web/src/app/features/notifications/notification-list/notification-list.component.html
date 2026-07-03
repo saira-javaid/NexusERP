@@ -1,4 +1,4 @@
-<div class="page-container">
+<div class="page-container notification-page">
   <div class="page-header">
     <h1>Notifications</h1>
     <div class="actions">
@@ -17,30 +17,52 @@
     </div>
   </div>
 
-  <mat-nav-list>
+  <div class="notification-list">
     @for (n of notifications(); track n.id) {
-      <mat-list-item
+      <article
+        class="notification-card"
         [class.unread]="!n.isRead"
-        (click)="markAsRead(n, true)">
-        <mat-icon matListItemIcon [class.unread-icon]="!n.isRead">
+        (click)="markAsRead(n, true)"
+        (keydown.enter)="markAsRead(n, true)"
+        tabindex="0"
+        role="button"
+        [attr.aria-label]="n.title">
+        <mat-icon class="notification-icon" [class.unread-icon]="!n.isRead">
           {{ n.isRead ? 'notifications_none' : 'notifications_active' }}
         </mat-icon>
-        <span matListItemTitle>
-          {{ n.title }}
-          @if (!n.isRead) { <span class="unread-dot"></span> }
-        </span>
-        <span matListItemLine>{{ n.message }}</span>
-        <span matListItemMeta>{{ n.createdAt | date:'medium' }}</span>
-        @if (!n.isRead) {
-          <button mat-icon-button matListItemMeta (click)="markAsRead(n); $event.stopPropagation()" title="Mark as read">
-            <mat-icon>check</mat-icon>
-          </button>
-        }
-      </mat-list-item>
+        <div class="notification-content">
+          <div class="notification-header">
+            <h2 class="notification-title">
+              {{ n.title }}
+              @if (!n.isRead) {
+                <span class="unread-dot" aria-hidden="true"></span>
+              }
+            </h2>
+            @if (!n.isRead) {
+              <button
+                mat-icon-button
+                type="button"
+                class="mark-read-btn"
+                (click)="markAsRead(n); $event.stopPropagation()"
+                title="Mark as read"
+                aria-label="Mark as read">
+                <mat-icon>check</mat-icon>
+              </button>
+            }
+          </div>
+          @if (n.message) {
+            <p class="notification-message">{{ n.message }}</p>
+          }
+          <time class="notification-time">{{ n.createdAt | date:'MMM d, y · h:mm a' }}</time>
+        </div>
+      </article>
     } @empty {
-      <p class="empty">No notifications</p>
+      <div class="empty-state">
+        <mat-icon>notifications_off</mat-icon>
+        <p>No notifications</p>
+      </div>
     }
-  </mat-nav-list>
+  </div>
 
   <app-list-pagination
     [totalCount]="totalCount()"

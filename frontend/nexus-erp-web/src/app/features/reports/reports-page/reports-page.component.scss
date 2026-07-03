@@ -105,7 +105,20 @@
   }
 }
 
-.table-wrap { overflow-x: auto; }
+.table-wrap {
+  overflow-x: auto;
+
+  &:has(.responsive-table) {
+    @media (max-width: 768px) {
+      overflow: visible;
+    }
+  }
+}
+
+.table-card app-list-pagination {
+  display: block;
+  margin-top: 8px;
+}
 
 .status-badge {
   padding: 4px 10px;

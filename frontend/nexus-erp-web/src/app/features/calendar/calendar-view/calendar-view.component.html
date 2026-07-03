@@ -1,17 +1,93 @@
-<div class="page-container">
-  <div class="calendar-header">
-    <button mat-button (click)="prevMonth()">←</button>
-    <h1>{{ monthLabel() }}</h1>
-    <button mat-button (click)="nextMonth()">→</button>
+<div class="page-container calendar-page">
+  <div class="calendar-toolbar">
+    <div class="toolbar-title">
+      <mat-icon class="title-icon">calendar_month</mat-icon>
+      <h1>Task Calendar</h1>
+    </div>
+    <div class="toolbar-actions">
+      <button mat-stroked-button type="button" (click)="goToToday()">Today</button>
+      <div class="month-nav">
+        <button mat-icon-button type="button" (click)="prevMonth()" aria-label="Previous month">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <span class="month-label">{{ monthLabel() }}</span>
+        <button mat-icon-button type="button" (click)="nextMonth()" aria-label="Next month">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+    </div>
   </div>
-  <div class="calendar-grid">
-    @for (day of getDaysInMonth(); track day) {
-      <mat-card class="day-cell">
-        <div class="day-number">{{ day }}</div>
-        @for (task of tasksForDay(day); track task.id) {
-          <div class="task-chip">{{ task.title }}</div>
+
+  @if (isMobile()) {
+    <div class="agenda-view">
+      @if (getAgendaDays().length === 0) {
+        <mat-card class="empty-state">
+          <mat-icon>event_available</mat-icon>
+          <p>No tasks due this month</p>
+          <span class="hint">Tasks with due dates will appear here.</span>
+        </mat-card>
+      } @else {
+        @for (day of getAgendaDays(); track day) {
+          <mat-card class="agenda-day" [class.today]="isToday(day)">
+            <div class="agenda-layout">
+              <div class="agenda-date-col">
+                <span class="weekday">{{ weekdayLabel(day) }}</span>
+                <span class="day-num" [class.today-num]="isToday(day)">{{ day }}</span>
+                @if (isToday(day)) {
+                  <span class="today-badge">Today</span>
+                }
+              </div>
+              <div class="agenda-content">
+                <p class="full-date">{{ fullDateLabel(day) }}</p>
+                <div class="agenda-tasks">
+                  @for (task of tasksForDay(day); track task.id) {
+                    <div class="task-item" [class]="taskStatusClass(task.status)">
+                      <span class="task-title">{{ task.title }}</span>
+                      <span class="task-meta">{{ task.status | statusLabel:'task' }}</span>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          </mat-card>
         }
-      </mat-card>
-    }
-  </div>
+      }
+    </div>
+  } @else {
+    <mat-card class="calendar-panel">
+      <div class="weekday-row">
+        @for (label of weekDays; track label; let i = $index) {
+          <span class="weekday-label" [class.weekend]="i === 0 || i === 6">{{ label }}</span>
+        }
+      </div>
+      <div class="calendar-grid">
+        @for (cell of getCalendarCells(); track $index) {
+          @if (cell === null) {
+            <div class="day-cell empty"></div>
+          } @else {
+            <div
+              class="day-cell"
+              [class.today]="isToday(cell)"
+              [class.weekend]="isWeekend(cell)"
+              [class.has-tasks]="tasksForDay(cell).length > 0"
+            >
+              <div class="day-header">
+                <span class="day-number" [class.today-num]="isToday(cell)">{{ cell }}</span>
+                @if (tasksForDay(cell).length > 0) {
+                  <span class="task-count">{{ tasksForDay(cell).length }}</span>
+                }
+              </div>
+              <div class="day-tasks">
+                @for (task of tasksForDay(cell); track task.id) {
+                  <div class="task-chip" [class]="taskStatusClass(task.status)" [title]="task.title">
+                    {{ task.title }}
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        }
+      </div>
+    </mat-card>
+  }
 </div>

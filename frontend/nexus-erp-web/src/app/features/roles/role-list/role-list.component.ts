@@ -14,6 +14,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { UserPreferencesService } from '../../../core/services/user-preferences.service';
 import { Role } from '../../../core/models/role.model';
 import { ListPaginationComponent } from '../../../shared/components/list-pagination/list-pagination.component';
+import { ConfirmDialogService } from '../../../shared/services/confirm-dialog.service';
 
 @Component({
   selector: 'app-role-list',
@@ -31,6 +32,7 @@ export class RoleListComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly preferences = inject(UserPreferencesService);
+  private readonly confirmDialog = inject(ConfirmDialogService);
 
   readonly roles = signal<Role[]>([]);
   readonly totalCount = signal(0);
@@ -73,15 +75,22 @@ export class RoleListComponent implements OnInit {
   }
 
   deleteRole(role: Role): void {
-    const confirmDelete = this.preferences.preferences().confirmBeforeDelete;
-    if (confirmDelete && !confirm(`Delete role "${role.name}"?`)) return;
-    this.roleService.delete(role.id).subscribe({
-      next: () => {
-        this.snackBar.open('Role deleted', 'Close', { duration: 3000 });
-        this.pageIndex.set(0);
-        this.loadRoles();
-      },
-      error: err => this.snackBar.open(err.error?.message ?? 'Failed to delete role', 'Close', { duration: 5000 }),
+    this.confirmDialog.confirmIfEnabled({
+      title: 'Delete role',
+      message: `Delete role "${role.name}"? Users assigned to this role may lose permissions.`,
+      confirmText: 'Delete',
+      confirmColor: 'warn',
+      icon: 'delete',
+    }).subscribe(confirmed => {
+      if (!confirmed) return;
+      this.roleService.delete(role.id).subscribe({
+        next: () => {
+          this.snackBar.open('Role deleted', 'Close', { duration: 3000 });
+          this.pageIndex.set(0);
+          this.loadRoles();
+        },
+        error: err => this.snackBar.open(err.error?.message ?? 'Failed to delete role', 'Close', { duration: 5000 }),
+      });
     });
   }
 }

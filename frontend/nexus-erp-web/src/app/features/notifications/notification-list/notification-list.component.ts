@@ -3,7 +3,6 @@ import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
-import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -18,7 +17,7 @@ import { ListPaginationComponent } from '../../../shared/components/list-paginat
   selector: 'app-notification-list',
   standalone: true,
   imports: [
-    DatePipe, ReactiveFormsModule, MatListModule, MatIconModule, MatButtonModule,
+    DatePipe, ReactiveFormsModule, MatIconModule, MatButtonModule,
     MatFormFieldModule, MatSelectModule, MatSnackBarModule, ListPaginationComponent,
   ],
   templateUrl: './notification-list.component.html',

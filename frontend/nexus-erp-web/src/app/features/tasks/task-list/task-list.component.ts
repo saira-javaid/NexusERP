@@ -14,6 +14,7 @@ import { UserPreferencesService } from '../../../core/services/user-preferences.
 import { Task, TaskStatus } from '../../../core/models/project.model';
 import { StatusLabelPipe, PriorityLabelPipe } from '../../../shared/pipes/app.pipes';
 import { ListPaginationComponent } from '../../../shared/components/list-pagination/list-pagination.component';
+import { ConfirmDialogService } from '../../../shared/services/confirm-dialog.service';
 
 @Component({
   selector: 'app-task-list',
@@ -31,6 +32,7 @@ export class TaskListComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly preferences = inject(UserPreferencesService);
+  private readonly confirmDialog = inject(ConfirmDialogService);
 
   readonly tasks = signal<Task[]>([]);
   readonly totalCount = signal(0);
@@ -74,14 +76,20 @@ export class TaskListComponent implements OnInit {
   }
 
   deleteTask(task: Task): void {
-    const confirmDelete = this.preferences.preferences().confirmBeforeDelete;
-    if (confirmDelete && !confirm(`Delete task "${task.title}"?`)) return;
-    this.taskService.delete(task.id).subscribe({
-      next: () => {
-        this.snackBar.open('Task deleted', 'Close', { duration: 3000 });
-        this.loadTasks();
-      },
-      error: err => this.snackBar.open(err.error?.message ?? 'Failed to delete task', 'Close', { duration: 5000 }),
+    this.confirmDialog.confirmIfEnabled({
+      message: `Delete task "${task.title}"?`,
+      confirmText: 'OK',
+      cancelText: 'Cancel',
+      confirmColor: 'warn',
+    }).subscribe(confirmed => {
+      if (!confirmed) return;
+      this.taskService.delete(task.id).subscribe({
+        next: () => {
+          this.snackBar.open('Task deleted', 'Close', { duration: 3000 });
+          this.loadTasks();
+        },
+        error: err => this.snackBar.open(err.error?.message ?? 'Failed to delete task', 'Close', { duration: 5000 }),
+      });
     });
   }
 }

@@ -535,8 +535,10 @@ public class DataSeederHostedService : IHostedService
             .Select(p => p.Code)
             .ToListAsync(cancellationToken);
 
+        var allProjects = sampleProjects.Concat(ExtraSeedData.Projects).ToArray();
+
         var added = 0;
-        foreach (var project in sampleProjects)
+        foreach (var project in allProjects)
         {
             if (existingCodes.Contains(project.Code))
                 continue;
@@ -551,7 +553,7 @@ public class DataSeederHostedService : IHostedService
                 "PRJ-HR-006" or "PRJ-TRN-009" => ManagerFor("priya.lead@nexuserp.com"),
                 "PRJ-CRM-011" or "PRJ-WEB-012" => ManagerFor("james.lead@nexuserp.com"),
                 "PRJ-WMS-013" => ManagerFor("sarah.manager@nexuserp.com"),
-                _ => ManagerFor("admin@nexuserp.com")
+                _ => ExtraSeedData.ManagerForCode(project.Code, ManagerFor)
             };
             context.Projects.Add(project);
             added++;
@@ -706,6 +708,9 @@ public class DataSeederHostedService : IHostedService
         Add("PRJ-VND-014", "Vendor registration flow", "Self-service signup with approval workflow.", TaskStatus.Todo, TaskPriority.Medium, 0, new DateTime(2026, 7, 1, 0, 0, 0, DateTimeKind.Utc), 24, assigneeEmails: "kate.support@nexuserp.com");
         Add("PRJ-VND-014", "Invoice submission portal", "Upload invoices and track payment status.", TaskStatus.Todo, TaskPriority.High, 1, new DateTime(2026, 8, 15, 0, 0, 0, DateTimeKind.Utc), 36, assigneeEmails: "robert.finance@nexuserp.com");
         Add("PRJ-VND-014", "PO acknowledgment module", "Vendors confirm or reject purchase orders.", TaskStatus.Todo, TaskPriority.Medium, 2, new DateTime(2026, 9, 1, 0, 0, 0, DateTimeKind.Utc), 20, assigneeEmails: "anna.member@nexuserp.com");
+
+        ExtraSeedData.SeedTasks((projectCode, title, description, status, priority, order, due, estHours, actualHours, assignee) =>
+            Add(projectCode, title, description, status, priority, order, due, estHours, actualHours, assignee));
 
         if (tasks.Count == 0)
             return;

@@ -14,6 +14,7 @@ import { AuthService } from '../../services/auth.service';
 import { ThemeService } from '../../services/theme.service';
 import { LoadingService } from '../../services/loading.service';
 import { SignalRService } from '../../services/signalr.service';
+import { ChatWidgetComponent } from '../../components/chat-widget/chat-widget.component';
 
 interface NavItem {
   label: string;
@@ -29,6 +30,7 @@ interface NavItem {
     RouterOutlet, RouterLink, RouterLinkActive,
     MatSidenavModule, MatToolbarModule, MatListModule,
     MatIconModule, MatButtonModule, MatBadgeModule, MatProgressBarModule,
+    ChatWidgetComponent,
   ],
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.scss',

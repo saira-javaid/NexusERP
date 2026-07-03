@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
+import { PageEvent } from '@angular/material/paginator';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -8,9 +9,11 @@ import { MatChipsModule } from '@angular/material/chips';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration } from 'chart.js';
 import { ReportService } from '../../../core/services/api.service';
+import { UserPreferencesService } from '../../../core/services/user-preferences.service';
 import { ExportService } from '../../../shared/services/export.service';
 import { ReportOverview, ReportProjectRow, StatusCount } from '../../../core/models/report.model';
 import { StatusLabelPipe } from '../../../shared/pipes/app.pipes';
+import { ListPaginationComponent } from '../../../shared/components/list-pagination/list-pagination.component';
 
 @Component({
   selector: 'app-reports-page',
@@ -18,6 +21,7 @@ import { StatusLabelPipe } from '../../../shared/pipes/app.pipes';
   imports: [
     CurrencyPipe, MatCardModule, MatButtonModule, MatTableModule,
     MatIconModule, MatChipsModule, BaseChartDirective, StatusLabelPipe,
+    ListPaginationComponent,
   ],
   templateUrl: './reports-page.component.html',
   styleUrl: './reports-page.component.scss',
@@ -25,8 +29,12 @@ import { StatusLabelPipe } from '../../../shared/pipes/app.pipes';
 export class ReportsPageComponent implements OnInit {
   private readonly reportService = inject(ReportService);
   private readonly exportService = inject(ExportService);
+  private readonly preferences = inject(UserPreferencesService);
 
   readonly overview = signal<ReportOverview | null>(null);
+  readonly allProjects = signal<ReportProjectRow[]>([]);
+  readonly pageIndex = signal(0);
+  readonly pageSize = signal(this.preferences.getPageSize());
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
   readonly chartsReady = signal(false);
@@ -72,7 +80,9 @@ export class ReportsPageComponent implements OnInit {
     this.reportService.getOverview().subscribe({
       next: data => {
         this.overview.set(data);
-        this.projectDataSource.data = data.projects ?? [];
+        this.allProjects.set(data.projects ?? []);
+        this.pageIndex.set(0);
+        this.updateProjectPage();
         this.projectsByStatus.set(data.projectsByStatus ?? []);
         this.taskStatusRows.set([
           { label: 'To Do', count: data.tasksByStatus.todo, color: '#ff9800' },
@@ -119,12 +129,26 @@ export class ReportsPageComponent implements OnInit {
     };
   }
 
+  onPageChange(event: PageEvent): void {
+    this.pageIndex.set(event.pageIndex);
+    this.pageSize.set(event.pageSize);
+    if (event.pageSize !== this.preferences.getPageSize()) {
+      this.preferences.update({ pageSize: event.pageSize });
+    }
+    this.updateProjectPage();
+  }
+
+  private updateProjectPage(): void {
+    const start = this.pageIndex() * this.pageSize();
+    this.projectDataSource.data = this.allProjects().slice(start, start + this.pageSize());
+  }
+
   exportReport(): void {
     const data = this.overview();
     if (!data) return;
 
     this.exportService.exportToExcel(
-      data.projects.map(p => ({
+      this.allProjects().map(p => ({
         Code: p.code,
         Name: p.name,
         Status: p.status,

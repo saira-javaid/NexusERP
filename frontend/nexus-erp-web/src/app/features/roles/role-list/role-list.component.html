@@ -17,10 +17,10 @@
   </div>
 
   <div class="table-container">
-    <table mat-table [dataSource]="roles()">
+    <table mat-table class="responsive-table" [dataSource]="roles()">
       <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef>Name</th>
-        <td mat-cell *matCellDef="let r">
+        <td mat-cell *matCellDef="let r" data-label="Name">
           {{ r.name }}
           @if (isSystemRole(r.name)) {
             <span class="system-badge">System</span>
@@ -29,19 +29,19 @@
       </ng-container>
       <ng-container matColumnDef="description">
         <th mat-header-cell *matHeaderCellDef>Description</th>
-        <td mat-cell *matCellDef="let r">{{ r.description ?? '-' }}</td>
+        <td mat-cell *matCellDef="let r" data-label="Description">{{ r.description ?? '-' }}</td>
       </ng-container>
       <ng-container matColumnDef="users">
         <th mat-header-cell *matHeaderCellDef>Users</th>
-        <td mat-cell *matCellDef="let r">{{ r.userCount }}</td>
+        <td mat-cell *matCellDef="let r" data-label="Users">{{ r.userCount }}</td>
       </ng-container>
       <ng-container matColumnDef="permissions">
         <th mat-header-cell *matHeaderCellDef>Permissions</th>
-        <td mat-cell *matCellDef="let r">{{ r.permissionCount }}</td>
+        <td mat-cell *matCellDef="let r" data-label="Permissions">{{ r.permissionCount }}</td>
       </ng-container>
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef>Actions</th>
-        <td mat-cell *matCellDef="let r">
+        <td mat-cell *matCellDef="let r" data-label="Actions">
           @if (canManage) {
             <a mat-icon-button [routerLink]="[r.id, 'edit']" title="Edit"><mat-icon>edit</mat-icon></a>
             @if (!isSystemRole(r.name)) {

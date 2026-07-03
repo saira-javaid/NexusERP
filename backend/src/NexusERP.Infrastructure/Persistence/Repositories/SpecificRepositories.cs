@@ -18,7 +18,12 @@ public class ProjectRepository : Repository<Project>, IProjectRepository
         var query = DbSet.Include(p => p.Manager).Include(p => p.Tasks).Include(p => p.Members).AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(search))
-            query = query.Where(p => p.Name.Contains(search) || p.Code.Contains(search));
+        {
+            var term = search.Trim();
+            query = query.Where(p =>
+                EF.Functions.Like(p.Name, $"%{term}%") ||
+                EF.Functions.Like(p.Code, $"%{term}%"));
+        }
 
         if (status.HasValue)
             query = query.Where(p => p.Status == status.Value);
@@ -238,7 +243,12 @@ public class MeetingRepository : Repository<Meeting>, IMeetingRepository
             .AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(search))
-            query = query.Where(m => m.Title.Contains(search) || (m.Description != null && m.Description.Contains(search)));
+        {
+            var term = search.Trim();
+            query = query.Where(m =>
+                EF.Functions.Like(m.Title, $"%{term}%") ||
+                (m.Description != null && EF.Functions.Like(m.Description, $"%{term}%")));
+        }
 
         if (status.HasValue)
             query = query.Where(m => m.Status == status.Value);
